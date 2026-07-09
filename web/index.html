@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Quiz Web - Quiz de Biología</title>
+    <link rel="stylesheet" href="web/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-dna"></i> Biology Quiz</h1>
+                <p>¡Demuestra tus conocimientos sobre biología!</p>
+            </div>
+        </header>
+
+        <!-- Menu Principal -->
+        <div id="mainMenu" class="menu-section">
+            <div class="menu-container">
+                <h2>Selecciona el Modo de Juego</h2>
+                
+                <div class="mode-grid">
+                    <!-- Modo Clásico -->
+                    <div class="mode-card">
+                        <div class="mode-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Modo Clásico</h3>
+                        <p>15 preguntas de biología general</p>
+                        <button class="btn-start" onclick="startQuiz('classic')">Comenzar</button>
+                    </div>
+
+                    <!-- Modo por Dificultad -->
+                    <div class="mode-card">
+                        <div class="mode-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Por Dificultad</h3>
+                        <p>Elige tu nivel de dificultad</p>
+                        <button class="btn-start" onclick="showDifficultyMenu()">Seleccionar</button>
+                    </div>
+
+                    <!-- Modo Tiempo -->
+                    <div class="mode-card">
+                        <div class="mode-icon">
+                            <i class="fas fa-hourglass-end"></i>
+                        </div>
+                        <h3>Contrarreloj</h3>
+                        <p>30 segundos por pregunta</p>
+                        <button class="btn-start" onclick="startQuiz('timed')">Comenzar</button>
+                    </div>
+
+                    <!-- Ver Récords -->
+                    <div class="mode-card">
+                        <div class="mode-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3>Mis Récords</h3>
+                        <p>Historial de puntuaciones</p>
+                        <button class="btn-start" onclick="showRecords()">Ver</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seleccionar Dificultad -->
+        <div id="difficultyMenu" class="menu-section hidden">
+            <div class="menu-container">
+                <h2>Selecciona tu Nivel</h2>
+                <div class="difficulty-grid">
+                    <div class="difficulty-card">
+                        <div class="difficulty-icon easy">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Fácil</h3>
+                        <p>Perfecto para principiantes</p>
+                        <button class="btn-difficulty easy" onclick="startQuiz('difficulty', 'easy')">Jugar</button>
+                    </div>
+                    <div class="difficulty-card">
+                        <div class="difficulty-icon medium">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <h3>Medio</h3>
+                        <p>Para jugadores experimentados</p>
+                        <button class="btn-difficulty medium" onclick="startQuiz('difficulty', 'medium')">Jugar</button>
+                    </div>
+                    <div class="difficulty-card">
+                        <div class="difficulty-icon hard">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <h3>Difícil</h3>
+                        <p>Para expertos en biología</p>
+                        <button class="btn-difficulty hard" onclick="startQuiz('difficulty', 'hard')">Jugar</button>
+                    </div>
+                </div>
+                <button class="btn-back" onclick="backToMenu()">← Volver</button>
+            </div>
+        </div>
+
+        <!-- Quiz Game -->
+        <div id="quizContainer" class="quiz-section hidden">
+            <!-- Progress Bar -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span class="question-counter">Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">15</span></span>
+                    <span id="timerDisplay" class="timer hidden">⏱️ <span id="timeLeft">30</span>s</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card">
+                <div class="question-header">
+                    <h2 id="questionText"></h2>
+                    <span class="difficulty-badge" id="difficultyBadge"></span>
+                </div>
+
+                <!-- Answer Options -->
+                <div id="answersContainer" class="answers-container"></div>
+
+                <!-- Navigation -->
+                <div class="quiz-navigation">
+                    <button id="prevBtn" class="btn-nav" onclick="previousQuestion()" style="display:none;">
+                        ← Anterior
+                    </button>
+                    <button id="nextBtn" class="btn-nav primary" onclick="nextQuestion()">Siguiente</button>
+                </div>
+            </div>
+
+            <!-- Score Display -->
+            <div class="score-display">
+                <div class="score-item">
+                    <span class="score-label">Correctas</span>
+                    <span id="correctCount" class="score-value correct">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Incorrectas</span>
+                    <span id="incorrectCount" class="score-value incorrect">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Sin Responder</span>
+                    <span id="skippedCount" class="score-value skipped">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="results-section hidden">
+            <div class="results-container">
+                <div class="results-header">
+                    <h2>¡Quiz Completado!</h2>
+                    <div class="final-score">
+                        <span id="finalScore">0</span>
+                        <span class="final-percentage" id="finalPercentage">0%</span>
+                    </div>
+                </div>
+
+                <!-- Score Analysis -->
+                <div class="score-analysis">
+                    <div class="analysis-card correct">
+                        <h3>Correctas</h3>
+                        <span id="resultsCorrect">0</span>
+                    </div>
+                    <div class="analysis-card incorrect">
+                        <h3>Incorrectas</h3>
+                        <span id="resultsIncorrect">0</span>
+                    </div>
+                    <div class="analysis-card skipped">
+                        <h3>Sin Responder</h3>
+                        <span id="resultsSkipped">0</span>
+                    </div>
+                </div>
+
+                <!-- Performance Message -->
+                <div id="performanceMessage" class="performance-message"></div>
+
+                <!-- Review Answers -->
+                <button class="btn-review" onclick="reviewAnswers()">
+                    <i class="fas fa-eye"></i> Revisar Respuestas
+                </button>
+
+                <!-- Buttons -->
+                <div class="results-buttons">
+                    <button class="btn-restart" onclick="backToMenu()">
+                        <i class="fas fa-home"></i> Menú Principal
+                    </button>
+                    <button class="btn-again" onclick="retakeQuiz()">
+                        <i class="fas fa-redo"></i> Intentar de Nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Answers Screen -->
+        <div id="reviewScreen" class="review-section hidden">
+            <div class="review-container">
+                <h2>Revisión de Respuestas</h2>
+                <div id="reviewContent" class="review-content"></div>
+                <button class="btn-close" onclick="closeReview()">
+                    ← Volver a Resultados
+                </button>
+            </div>
+        </div>
+
+        <!-- Records Screen -->
+        <div id="recordsScreen" class="records-section hidden">
+            <div class="records-container">
+                <h2>Mis Récords</h2>
+                <div id="recordsList" class="records-list"></div>
+                <button class="btn-back" onclick="backToMenu()">← Volver</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="web/js/app.js"></script>
+</body>
+</html>
